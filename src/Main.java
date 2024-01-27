@@ -19,13 +19,10 @@ public class Main {
         String[] options = args;
 
         String pathOutput = "";
-
         String prefixOutput = "";
-
-        boolean isShortStatistic = true;
-
         String pathInput = "";
 
+        boolean isShortStatistic = true;
         boolean conditionPathOutput = false;
         boolean conditionPrefix = false;
         boolean conditionRewrite = true;
@@ -37,6 +34,7 @@ public class Main {
 
         System.out.println("--- Для вызова справки по опциям введите -info при вызове программы ---");
 
+//        обработка условий запуска утилиты
         for (int i = 0; i < options.length; i++) {
             if (options[i].equals("-info")) {
                 if (!conditionInfo) {
@@ -118,14 +116,8 @@ public class Main {
             }
         }
 
-        System.out.println("pathOutput: " + pathOutput);
-        System.out.println("prefixOutput: " + prefixOutput);
-        System.out.println("isShortStatistic: " + isShortStatistic);
-        System.out.println("pathInput: " + pathInput);
-        System.out.println("rewrite: " + conditionRewrite);
-        System.out.println(fileNames);
 
-        //блок по чтению
+        //чтение из файлов в лист
         List<String> stringsInput = new ArrayList<>();
         Scanner catchScanner = new Scanner(System.in);
         for (int i = 0; i < fileNames.size(); i++) {
@@ -153,7 +145,7 @@ public class Main {
         }
         catchScanner.close();
 
-        System.out.println(stringsInput);
+        //разделение данных с записью в разные листы
         List<BigDecimal> floats = new ArrayList<>();
         List<BigInteger> integers = new ArrayList<>();
         List<String> strings = new ArrayList<>();
@@ -170,6 +162,7 @@ public class Main {
                 strings.add(stringsInput.get(i));
             }
         }
+//        запись данных в соответствующие файлы
         String floatFileName = "";
         String integerFileName = "";
         String stringsFileName = "";
@@ -186,6 +179,7 @@ public class Main {
             stringsFileName = pathOutput + "\\" + prefixOutput + "strings.txt";
             writeListToFile(strings, stringsFileName, conditionRewrite);
         }
+        //получение статистики из файлов, включая статистику из уже существующих файлов
         List<BigDecimal> floatsAll = new ArrayList<>();
         List<BigInteger> integersAll = new ArrayList<>();
         List<String> stringsAll = new ArrayList<>();
