@@ -24,4 +24,4 @@
 
 ## Инстукция по запуску
 
-Нужно скачать папку utilForFiles_jar, в папке этого проекта открыть терминал и ввести команду java -jar utilForFiles.jar -s -a -sample- in1.txt in2.txt
+Нужно скачать папку utilForFiles_jar, в папке этого проекта открыть терминал и ввести команду java -jar utilForFiles.jar -s -a -p sample- in1.txt in2.txt
