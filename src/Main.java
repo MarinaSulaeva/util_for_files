@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        // -o нужно уметь задавать путь для результатов
+        // -o задаёт путь для результатов
         // -p задает префикс имен выходных файлов
         // -a режим добавления в существующие файлы (по умолчанию - файлы перезаписываются)
         // -s краткая статистика (количество элементов в исходящие файлы)
@@ -49,70 +49,67 @@ public class Main {
                     }
                 }
             } else if (options[i].equals("-o")) {
-                if (conditionPathOutput) {  //на случай если условие задают 2 раза во входных аргументах
-                    System.out.println("!Такое условие уже задано: " + "conditionPathOutput");
+                if (conditionPathOutput) {  //на случай если условие задают более 1 раза во входных аргументах
+                    System.out.println("!!Путь выходных файлов указан более 1 раза, будет взят первый аргумент");
                 } else {
                     try {
                         if (options[i + 1].charAt(0) != '-') {
-                            pathOutput = options[i + 1].replaceAll("\\|", " ").replaceAll("\\\\", "\\\\");
+                            pathOutput = options[i + 1].replaceAll("\\\\", "\\\\");
                             conditionPathOutput = true;
                         }
                     } catch (Exception e) {
-                        System.out.println("!Ошибка при чтении пути или путь отсутствует");
-                        e.printStackTrace();
+                        System.out.println("!Ошибка опции \"-o\" при чтении пути или путь отсутствует, будет использован корневой каталог.");
                     }
                 }
             } else if (options[i].equals("-p")) {
-                if (conditionPrefix) {  //на случай если условие задают 2 раза во входных аргументах
-                    System.out.println("!Такое условие уже задано: " + "conditionPrefix");
+                if (conditionPrefix) {  //на случай если условие задают более 1 раза во входных аргументах
+                    System.out.println("!Префикс входных файлов указан более 1 раза, будет взят первый аргумент");
                 } else {
                     try {
                         if (options[i + 1].charAt(0) != '-') {
-                            prefixOutput = options[i + 1].replaceAll("\\|", " ");
+                            prefixOutput = options[i + 1];
                             conditionPrefix = true;
                         }
                     } catch (Exception e) {
-                        System.out.println("!Ошибка при чтении префикса выходных файлов или он отсутствует");
-                        e.printStackTrace();
+                        System.out.println("!Ошибка при чтении префикса выходных файлов или он отсутствует, префикс использован не будет");
                     }
                 }
 
             } else if (options[i].equals("-ip")) {
-                if (conditionPathInput) {  //на случай если условие задают 2 раза во входных аргументах
-                    System.out.println("!Такое условие уже задано: " + "conditionPathInput");
+                if (conditionPathInput) {  //на случай если условие задают более 1 раза во входных аргументах
+                    System.out.println("!Путь входных файлов указан более 1 раза, будет взят первый аргумент");
                 } else {
                     try {
                         if (options[i + 1].charAt(0) != '-') {
-                            pathInput = options[i + 1].replaceAll("\\|", " ").replaceAll("\\\\", "\\\\");
+                            pathInput = options[i + 1].replaceAll("\\\\", "\\\\");
                             conditionPathInput = true;
                         }
                     } catch (Exception e) {
-                        System.out.println("!Ошибка при чтении пути входных файлов или он отсутствует");
-                        e.printStackTrace();
+                        System.out.println("!Ошибка опции \"-ip\" при чтении пути или он отсутствует, будет использован корневой каталог.");
                     }
                 }
             } else if (options[i].equals("-a")) {
                 if (!conditionRewrite) {
-                    System.out.println("!Условие по записи уже задано");
+                    System.out.println("!Условие по записи в существующие файлы задано более 1 раза");
                 } else {
                     conditionRewrite = false;
                 }
             } else if (options[i].equals("-f")) {
                 if (conditionStatistic) {
-                    System.out.println("!Условие по статистике уже задано");
+                    System.out.println("!Условие по статистике указано более 1 раза, будет взят первый аргумент");
                 } else {
                     isShortStatistic = false;
                     conditionStatistic = true;
                 }
             } else if (options[i].equals("-s")) {
                 if (conditionStatistic) {
-                    System.out.println("!Условие по статистике уже задано");
+                    System.out.println("!Условие по статистике указано более 1 раза, будет взят первый аргумент");
                 } else {
                     isShortStatistic = true;
                     conditionStatistic = true;
                 }
             } else if (options[i].contains(".txt")) {
-                fileNames.add(options[i].replaceAll("\\|", " "));
+                fileNames.add(options[i]);
             }
         }
 
@@ -136,11 +133,16 @@ public class Main {
             } catch (IOException ioException) {
                 System.out.println("!Данный файл с именем \"" + fileNames.get(i) + "\" не найден, могли возникнуть " +
                         "проблемы с пробелами в названии файла или спецсимволами при считывании во время запуска. " +
-                        "Попробуйте ввести название файла ещё раз (включая расширение) :");
-                fileNames.add(i, catchScanner.nextLine());
+                        "Попробуйте ввести название файла в строке ниже ещё раз (с расширением и пробелом в названии файла если он есть). Для выхода из программы введите \"exit\"");
+                String correctFileNameOrExit = catchScanner.nextLine();
+                if (correctFileNameOrExit.equals("exit")) {
+                    System.out.println("---Выход из программы---");
+                    System.exit(999);
+                }
+                fileNames.add(i, correctFileNameOrExit);
                 fileNames.remove(i + 1);
                 i = i - 1;
-                System.out.println("Если файл всё ещё не найден, попробуйте при запуске программы указать директорию с помощью опции -ip");
+                System.out.println("--- Если файл не удаётся найти, попробуйте при перезапуске программы указать директорию входных файлов с помощью опции -ip ---");
             }
         }
         catchScanner.close();
@@ -167,16 +169,22 @@ public class Main {
         String integerFileName = "";
         String stringsFileName = "";
 
+        String pathSlash = "\\";
+
+        if (pathOutput.isBlank()) {
+            pathSlash = "";
+        }
+
         if (!floats.isEmpty()) {
-            floatFileName = pathOutput + "\\" + prefixOutput + "floats.txt";
+            floatFileName = pathOutput + pathSlash + prefixOutput + "floats.txt";
             writeListToFile(floats, floatFileName, conditionRewrite);
         }
         if (!integers.isEmpty()) {
-            integerFileName = pathOutput + "\\" + prefixOutput + "integers.txt";
+            integerFileName = pathOutput + pathSlash + prefixOutput + "integers.txt";
             writeListToFile(integers, integerFileName, conditionRewrite);
         }
         if (!strings.isEmpty()) {
-            stringsFileName = pathOutput + "\\" + prefixOutput + "strings.txt";
+            stringsFileName = pathOutput + pathSlash + prefixOutput + "strings.txt";
             writeListToFile(strings, stringsFileName, conditionRewrite);
         }
         //получение статистики из файлов, включая статистику из уже существующих файлов
@@ -225,7 +233,7 @@ public class Main {
                 list.add(line);
             }
         } catch (FileNotFoundException e) {
-            System.out.println("файл" + fileName + "не найден");
+            System.out.println("Файл " + fileName + " не найден");
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
